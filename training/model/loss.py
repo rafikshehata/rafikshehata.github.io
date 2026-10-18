@@ -23,6 +23,7 @@ def mrstft(y, s, resolutions):
     for n_fft, hop in resolutions:
         S, Y = stft(s, n_fft, hop).abs(), stft(y, n_fft, hop).abs()
         sc = torch.linalg.vector_norm(S - Y, dim=(1, 2)) / (torch.linalg.vector_norm(S, dim=(1, 2)) + 1e-9)
+        sc = sc.clamp(max=10.0)                  # bounded for (rare) near-silent targets
         delta = 1e-3 * S.amax(dim=(1, 2), keepdim=True) + 1e-12
         lm = (torch.log(S + delta) - torch.log(Y + delta)).abs().mean(dim=(1, 2))
         total = total + (sc + lm).mean()

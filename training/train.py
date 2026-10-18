@@ -292,15 +292,15 @@ class Trainer:
         loss, parts = L.total_loss(y, tgt, self.cfg["loss"])
         info.update(parts)
         self.opt.zero_grad(set_to_none=True)
-        finite = self.allreduce([float(torch.isfinite(loss))], dist.ReduceOp.MIN if self.world > 1 else None)[0]
+        finite = self.allreduce([float(torch.isfinite(loss.detach()))], dist.ReduceOp.MIN if self.world > 1 else None)[0]
         if not finite:                                          # every rank skips together
             self.nan_steps += 1
-            info.update(loss=float(loss), grad_norm=float("nan"), skipped=1.0)
+            info.update(loss=float(loss.detach()), grad_norm=float("nan"), skipped=1.0)
             return info
         loss.backward()
         gn = torch.nn.utils.clip_grad_norm_(self.net.parameters(), self.t["grad_clip"])
         self.opt.step()
-        info.update(loss=float(loss), grad_norm=float(gn))
+        info.update(loss=float(loss.detach()), grad_norm=float(gn))
         return info
 
     def run(self) -> int:

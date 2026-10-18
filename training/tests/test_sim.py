@@ -122,3 +122,14 @@ def test_corpus_real_split_if_present():
         pytest.skip("LibriSpeech not fetched on this VM")
     n_tr, n_ho = corpus.check_disjoint()
     assert n_tr >= 30 and n_ho >= 30
+
+
+def test_targets_are_not_silent(cfg):
+    """Long identity simulations must not crop past the utterance end (silent targets)."""
+    c = copy.deepcopy(cfg); c["sim"]["id_sim_seconds"] = 4.0
+    g = PairGenerator(c, "train")
+    for seed in range(6):
+        mic, tgt, meta = g.pair(300 + seed, fixed={"mode": "id"})
+        assert loop_sim.energy_db(tgt) > loop_sim.energy_db(mic) - 50, meta
+    cp = g.components(400, phase=2, T=4 * 48000)
+    assert loop_sim.energy_db(cp["target"][-48000:]) > loop_sim.energy_db(cp["src"][-48000:]) - 30

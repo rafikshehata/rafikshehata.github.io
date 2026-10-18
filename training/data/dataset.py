@@ -106,7 +106,10 @@ class PairGenerator:
         sc = self.scene(rng) if "scene" not in fixed else fixed["scene"]
         h_talk, h_pa = sc["h_talk"], sc["h_pa"]
         n_pre = len(h_talk)
-        x = self.speech_concat(rng, n_pre + T) if fixed.get("concat") else self.speech(rng, n_pre, T)
+        # Long simulations (6 s identity pairs, phase-2 rollouts, 10 s eval) concatenate one speaker's
+        # utterances: a single crop would often run past the utterance end into zero padding.
+        concat = fixed.get("concat", T > int(2.5 * FS))
+        x = self.speech_concat(rng, n_pre + T) if concat else self.speech(rng, n_pre, T)
         early = h_talk[: sc["n_dir"] + int(self.sim["early_ms"] * FS / 1000)].copy()
         f = min(240, len(early) // 4)
         early[len(early) - f:] *= 0.5 * (1 + np.cos(np.linspace(0, np.pi, f)))

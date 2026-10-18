@@ -335,6 +335,12 @@ Builder deviations are appended below this line.
   plays the clean target), so there is no runaway to stop; clipping still applies.
 * **B1-4 — preview listening.** "Audibly ring" cannot be judged by ear in the
   cloud; `preview.py` prints trip status and level growth for each pair instead.
+* **B1-5 — long simulations concatenate speech.** Segments longer than 2.5 s
+  (6 s identity pairs, phase-2 rollouts, 10 s eval scenes) use back-to-back
+  utterances of one speaker. A single crop ran past short utterances into zero
+  padding and produced near-silent targets (found in B5 chunk 1: loss 2e5; the
+  cache and validation set were rebuilt and the run restarted). The
+  spectral-convergence term is also clamped at 10 per item.
 * **B2-1 — parameter counts are exact.** `RinglessNet` counts equal §3 (S 192 561,
   M 661 553, tiny 5 681), so the ±10 % tolerance is not used.
 
