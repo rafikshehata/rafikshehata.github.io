@@ -45,7 +45,7 @@ sim:
 loss:
   mrstft: [[256, 64], [512, 128], [1024, 256]]
   w_mrstft: 1.0
-  w_sisdr: 0.05
+  w_sisdr: 0.2          # 0.05 until step 18382 (DESIGN §9 B5-5 trial)
   w_howl: 1.0
   howl_nfft: 2048
   howl_hop: 512

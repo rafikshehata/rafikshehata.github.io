@@ -151,7 +151,7 @@ CPU time per frame is measured locally in C30 (needs the M1 Pro).
 
 ## 4. Loss
 
-`L = L_mr + 0.05 · (−SI-SDR_dB) + 1.0 · L_howl`, computed on full 2 s
+`L = L_mr + 0.05 · (−SI-SDR_dB) + 1.0 · L_howl` (0.2 per dB from step 18 382, §9 B5-5), computed on full 2 s
 sequences of `ŷ = y_full` against `s = s_tgt`.
 
 | Term | Formula | Weight | Why |
@@ -385,6 +385,16 @@ Builder deviations are appended below this line.
   checkpoint with the best eval SI-SDRi so far is kept as `best_gate.pt` (with
   `report_best_gate.json`) and pushed to `ckpt/s-v1`. The export on PASS uses the
   checkpoint that passed.
+* **B5-5 — phase-2 plateau: SI-SDR loss weight trial (Planner, step 18 382).**
+  Phase-2 evals gave SI-SDRi +2.40 / +2.48 / +2.39 dB at steps 17 312 / 17 856 /
+  18 382 (ASG median +5.87 / +5.94 / +6.12 dB), so the phase-2 plateau rule
+  fired. The loss weights SI-SDR, the gated metric, at 0.05 per dB, so the
+  magnitude-only STFT terms dominate the gradient. Trial: `w_sisdr` 0.05 → 0.2 per
+  dB (inside §6 "weights tunable") for 8 chunks with evals at chunks 36 and 40.
+  Success = an eval SI-SDRi ≥ +2.58 dB (0.1 above the best so far); otherwise
+  stop and write the FAIL report with the diagnosis and DESIGN v2 proposals.
+  The validation loss scale changes with the weight; best-checkpoint selection
+  does not use it.
 
 ---
 
