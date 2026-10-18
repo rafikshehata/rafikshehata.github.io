@@ -184,8 +184,8 @@ B3's probe (`train.py --probe`, 4 ranks × 1 thread, 1 data worker each, VM idle
 
 | Probe (B3) | steps/s | steps per 25-min chunk | phase steps | chunks |
 |---|---|---|---|---|
-| S phase 1 (16 × 2 s) | 0.655 | 923 | **20 000** (was 40 000, §9 B5-2) | ≈ 22 |
-| S phase 2 (16 × 6 s rollouts) | 0.088 | 124 | **8 000** (was 5 500, §9 B5-2) | ≈ 65 |
+| S phase 1 (16 × 2 s) | 0.655 | 923 | **16 800** (was 40 000 → 20 000, §9 B5-2/3) | ≈ 20 |
+| S phase 2 (16 × 6 s rollouts) | 0.088 | 124 | **9 000** (was 5 500 → 8 000, §9 B5-2/3) | ≈ 73 |
 
 (2 ranks gave 0.532 steps/s in phase 1; 1 process with 4 threads and 3 workers
 gave 0.143.) The split first moved from the planned 60/30 chunks to ≈ 43/44
@@ -368,6 +368,16 @@ Builder deviations are appended below this line.
   20 000 and `phase2_steps` 5 500 → 8 000 (≈ 8.5 + 25.3 = 33.8 chunk-hours of
   the 40). Thresholds unchanged. The phase-1 cosine now ends at step 20 000, so
   the learning rate steps down from 8.5e-4 to 5.0e-4 at chunk 14.
+* **B5-3 — plateau at step 16 748; phase 2 starts now (Planner).** The §9
+  plateau rule fired after chunk 20: best val SI-SDR rose 9.570 → 9.670 dB over
+  six chunks (0.09999 dB, just under 0.1). Decision: phase 1 has converged on its
+  open-loop metric (learning rate already 7.6e-5), and the failing gate metric is
+  in-loop, so `phase1_steps` 20 000 → 16 800 and `phase2_steps` 8 000 → 9 000
+  (≈ 28 chunk-hours at the probed 0.088 steps/s; 8.0 used so far). In phase 2 the
+  validation set (open-loop pairs) no longer tracks the objective, so the
+  plateau rule is applied to the G2c eval run every 4 chunks instead: stop when
+  the median SI-SDRi of the last two phase-2 evals is not ≥ 0.1 dB above the best
+  earlier phase-2 eval. Gate thresholds unchanged.
 
 ---
 
