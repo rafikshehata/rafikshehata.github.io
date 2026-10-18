@@ -484,4 +484,4 @@ loss, schedule — in that order of suspicion).
 - budget_hours: 40
 - gate G2c: FAIL at step 13340
 - blocked: none (GitHub push restored 2026-10-18; ckpt/s-v1 published at step 16226)
-- last update: 2026-10-18 — chunk 20 done; ESCALATION: val SI-SDR plateau (< 0.1 dB over 6 chunks)
+- last update: 2026-10-18 — chunk 20: phase-1 plateau rule fired; Planner moved phase 2 to step 16800 (DESIGN §9 B5-3)
