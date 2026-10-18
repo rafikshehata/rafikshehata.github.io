@@ -479,9 +479,9 @@ loss, schedule — in that order of suspicion).
 - track: Stage 3 cloud (C25–C29 equivalents) — see `03-advanced.md` for C30–C32
 - mode: single cloud session plays all roles on `rafikshehata/rafikshehata.github.io`, branch `claude/wizardly-hawking-ctkdaw` (= "main" here); checkpoints on `ckpt/<run>` (DESIGN §9 D0)
 - design: locked ec6977b
-- build: B0 ☑ (ckpt round-trip verified on a local bare remote only; GitHub push 403) · B1 ☑ · B2 ☑ · B3 ☑ · B4 ☑ · B5 ☑ (ckpt/s-v1 not pushed: GitHub 403; checkpoints local)
+- build: B0 ☑ (ckpt round-trip verified on GitHub 2026-10-18; proxy refused deleting test branch ckpt/demo) · B1 ☑ · B2 ☑ · B3 ☑ · B4 ☑ · B5 ☑
 - run s-v1: chunks 19 · step 15872 (phase 1) · val SI-SDR 9.66 dB · best 9.67 dB @ 15000 · chunk-hours 7.58 · last ASG median +5.77 / p10 +4.07 dB, SI-SDRi +2.28, dSTOI +0.010 @ step 13340
 - budget_hours: 40
 - gate G2c: FAIL at step 13340
-- blocked: GitHub push refused (Claude GitHub App lacks write access to the repo) — commits are local until the owner fixes access
+- blocked: none (GitHub push restored 2026-10-18; ckpt/s-v1 published at step 16226)
 - last update: 2026-10-18 — chunk 19 done
