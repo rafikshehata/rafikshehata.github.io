@@ -479,9 +479,9 @@ loss, schedule — in that order of suspicion).
 - track: Stage 3 cloud (C25–C29 equivalents) — see `03-advanced.md` for C30–C32
 - mode: single cloud session plays all roles on `rafikshehata/rafikshehata.github.io`, branch `claude/wizardly-hawking-ctkdaw` (= "main" here); checkpoints on `ckpt/<run>` (DESIGN §9 D0)
 - design: locked ec6977b
-- build: B0 ☑ (ckpt round-trip verified on a local bare remote only; GitHub push 403) · B1 ☐ · B2 ☐ · B3 ☐ · B4 ☐ · B5 ☐
+- build: B0 ☑ (ckpt round-trip verified on a local bare remote only; GitHub push 403) · B1 ☑ · B2 ☑ · B3 ☑ · B4 ☑ · B5 ☐
 - run s-v1: chunks 0 · step 0 · val SI-SDR — · best — · last ASG —
 - budget_hours: 40
 - gate G2c: pending
 - blocked: GitHub push refused (Claude GitHub App lacks write access to the repo) — commits are local until the owner fixes access
-- last update: 2026-10-18 — design locked; network allowlist fixed (incl. download-r2.pytorch.org)
+- last update: 2026-10-18 — B0–B4 built, 50 tests green; B3 probe 0.655 / 0.088 steps/s (phase 1 / 2); eval 303 s; starting B5
