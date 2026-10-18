@@ -184,8 +184,8 @@ B3's probe (`train.py --probe`, 4 ranks × 1 thread, 1 data worker each, VM idle
 
 | Probe (B3) | steps/s | steps per 25-min chunk | phase steps | chunks |
 |---|---|---|---|---|
-| S phase 1 (16 × 2 s) | 0.655 | 923 | **40 000** | ≈ 43 |
-| S phase 2 (16 × 6 s rollouts) | 0.088 | 124 | **5 500** | ≈ 44 |
+| S phase 1 (16 × 2 s) | 0.655 | 923 | **20 000** (was 40 000, §9 B5-2) | ≈ 22 |
+| S phase 2 (16 × 6 s rollouts) | 0.088 | 124 | **8 000** (was 5 500, §9 B5-2) | ≈ 65 |
 
 (2 ranks gave 0.532 steps/s in phase 1; 1 process with 4 threads and 3 workers
 gave 0.143.) The split moved from the planned 60/30 chunks to ≈ 43/44 because a
@@ -361,6 +361,16 @@ Builder deviations are appended below this line.
 * **B4-1 — eval details.** Eval scenes concatenate one held-out speaker's
   utterances to 10 s (test-clean utterances are mostly shorter); eval runs
   single-threaded by default (same oversubscription finding as B3-2).
+
+* **B5-2 — phase switch moved earlier (Planner, step 10 101).** Evidence: G2c
+  evals at steps 3 022 / 6 655 / 10 000 gave ASG median +5.41 / +6.08 / +6.26 dB
+  (p10 ≥ +4.06, passing) but SI-SDRi at −3 dB of only +1.82 / +2.08 / +2.16 dB,
+  gaining ≈ 0.1 dB per four chunks. A diagnosis on 6 eval scenes showed the model
+  reaches 13.9 dB SI-SDR open loop on talker + noise but 11.4 dB inside the loop at
+  −3 dB: the loss is in-loop, which phase 2 trains on. `phase1_steps` 40 000 →
+  20 000 and `phase2_steps` 5 500 → 8 000 (≈ 8.5 + 25.3 = 33.8 chunk-hours of
+  the 40). Thresholds unchanged. The phase-1 cosine now ends at step 20 000, so
+  the learning rate steps down from 8.5e-4 to 5.0e-4 at chunk 14.
 
 ---
 

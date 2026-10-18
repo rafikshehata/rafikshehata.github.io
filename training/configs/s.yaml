@@ -61,8 +61,8 @@ train:
   warmup: 500
   weight_decay: 0.01
   grad_clip: 5.0
-  phase1_steps: 40000    # B3 probe: 0.655 steps/s -> 923/chunk, ~43 chunks
-  phase2_steps: 5500     # B3 probe: 0.088 steps/s -> 124/chunk, ~44 chunks
+  phase1_steps: 20000    # B3 probe 0.655 steps/s -> 923/chunk; moved from 40000 (DESIGN §9 B5-2)
+  phase2_steps: 8000     # B3 probe 0.088 steps/s -> 124/chunk; was 5500 (DESIGN §9 B5-2)
   phase2:
     batch: 16
     lr: 3.0e-4
