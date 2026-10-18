@@ -477,10 +477,11 @@ loss, schedule — in that order of suspicion).
 
 ## STATE
 - track: Stage 3 cloud (C25–C29 equivalents) — see `03-advanced.md` for C30–C32
-- design: not started
+- mode: single cloud session plays all roles on `rafikshehata/rafikshehata.github.io`, branch `claude/wizardly-hawking-ctkdaw` (= "main" here); checkpoints on `ckpt/<run>` (DESIGN §9 D0)
+- design: locked ec6977b
 - build: B0 ☐ · B1 ☐ · B2 ☐ · B3 ☐ · B4 ☐ · B5 ☐
 - run s-v1: chunks 0 · step 0 · val SI-SDR — · best — · last ASG —
 - budget_hours: 40
 - gate G2c: pending
-- blocked: owner prerequisites (§2) not yet done — repo not on GitHub, environment not created
-- last update: 2026-10-17 — runbook written locally by the Invoicer session; nothing built
+- blocked: GitHub push refused (Claude GitHub App lacks write access to the repo) — commits are local until the owner fixes access
+- last update: 2026-10-18 — design locked; network allowlist fixed (incl. download-r2.pytorch.org)
