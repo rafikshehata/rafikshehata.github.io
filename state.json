@@ -1,0 +1,22 @@
+{
+  "run": "s-v1",
+  "config": "configs/s.yaml",
+  "step": 19823,
+  "phase": 2,
+  "phase1_steps": 16800,
+  "phase2_steps": 9000,
+  "done": false,
+  "best_val_sisdr": 9.67460578918457,
+  "best_step": 16800,
+  "last_val": {
+    "val_loss": -1.4987476170063019,
+    "val_sisdr": 9.558792266845703,
+    "val_sisdr_in": 6.450475273132324
+  },
+  "chunks": 38,
+  "train_seconds": 55440.7,
+  "nan_steps": 0,
+  "world": 4,
+  "reason": "budget",
+  "time": "2026-10-18T22:12:55Z"
+}
