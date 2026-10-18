@@ -1,0 +1,38 @@
+[project]
+name = "ringless-training"
+version = "0.1.0"
+description = "Ringless neural stage: feedback-loop simulator, model, RTNeural export, chunked training and eval"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "torch>=2.5",
+    "numpy>=1.26",
+    "scipy>=1.13",
+    "soundfile>=0.12",
+    "pyroomacoustics>=0.8",
+    "pystoi>=0.4",
+    "pyyaml>=6.0",
+    "pytest>=8.0",
+    "tqdm>=4.66",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# The package lives in this directory but is imported as `training.*`, so the
+# editable install puts the repository root on sys.path instead of shipping files.
+[tool.hatch.build.targets.wheel]
+bypass-selection = true
+dev-mode-dirs = [".."]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
