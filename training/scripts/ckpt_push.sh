@@ -10,7 +10,7 @@ repo="$(git -C "$here" rev-parse --show-toplevel)"
 src="$here/runs/$run"
 [ -d "$src" ] || { echo "ckpt_push: $src does not exist" >&2; exit 1; }
 
-files=(latest.pt prev.pt best.pt state.json metrics.jsonl chunks.jsonl REPORT.md model.rtneural.json model.json)
+files=(latest.pt prev.pt best.pt best_gate.pt state.json metrics.jsonl chunks.jsonl babysit.jsonl evals_p2.jsonl REPORT.md report.json report_best_gate.json model.rtneural.json model.json)
 limit=$((50 * 1024 * 1024))
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
 export GIT_INDEX_FILE="$tmp/index"

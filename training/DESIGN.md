@@ -378,6 +378,13 @@ Builder deviations are appended below this line.
   plateau rule is applied to the G2c eval run every 4 chunks instead: stop when
   the median SI-SDRi of the last two phase-2 evals is not ≥ 0.1 dB above the best
   earlier phase-2 eval. Gate thresholds unchanged.
+* **B5-4 — phase-2 evals use the latest weights.** `best.pt` is chosen by the
+  open-loop validation SI-SDR, which drifts down in phase 2 (9.675 → 9.599 dB by
+  step 17 184) as the model adapts to in-loop inputs, so it would keep pointing at
+  the phase-1 endpoint. In phase 2 the G2c eval runs on `latest.pt`; the
+  checkpoint with the best eval SI-SDRi so far is kept as `best_gate.pt` (with
+  `report_best_gate.json`) and pushed to `ckpt/s-v1`. The export on PASS uses the
+  checkpoint that passed.
 
 ---
 
