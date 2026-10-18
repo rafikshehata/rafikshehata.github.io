@@ -480,8 +480,8 @@ loss, schedule — in that order of suspicion).
 - mode: single cloud session plays all roles on `rafikshehata/rafikshehata.github.io`, branch `claude/wizardly-hawking-ctkdaw` (= "main" here); checkpoints on `ckpt/<run>` (DESIGN §9 D0)
 - design: locked ec6977b
 - build: B0 ☑ (ckpt round-trip verified on GitHub 2026-10-18; proxy refused deleting test branch ckpt/demo) · B1 ☑ · B2 ☑ · B3 ☑ · B4 ☑ · B5 ☑
-- run s-v1: chunks 35 · step 18906 (phase 2) · val SI-SDR 9.62 dB · best 9.67 dB @ 16800 · chunk-hours 13.78 · last ASG median +6.12 / p10 +4.30 dB, SI-SDRi +2.39, dSTOI +0.009 @ step 18382
+- run s-v1: chunks 36 · step 19085 (phase 2) · val SI-SDR 9.62 dB · best 9.67 dB @ 16800 · chunk-hours 14.20 · last ASG median +5.87 / p10 +4.20 dB, SI-SDRi +2.45, dSTOI +0.011 @ step 19085
 - budget_hours: 40
-- gate G2c: FAIL at step 18382
+- gate G2c: FAIL at step 19085
 - blocked: none (GitHub push restored 2026-10-18; ckpt/s-v1 published at step 16226)
-- last update: 2026-10-18 — chunk 35 done
+- last update: 2026-10-18 — chunk 36 done
