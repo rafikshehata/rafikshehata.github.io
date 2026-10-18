@@ -56,7 +56,7 @@ loss:
 
 train:
   batch: 4
-  threads: 4
+  threads: 1
   procs: 1
   lr: 1.0e-3
   lr_min: 1.0e-5
@@ -72,6 +72,7 @@ train:
     g_rel_db: [-3, 3]
     p_above_msg: 0.5
     tbptt_frames: 100
+    rollout_seconds: 1.0   # in-loop rollout length (DESIGN §9 B3-3)
   ckpt_minutes: 5
   log_every: 10
   val_every: 25

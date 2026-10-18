@@ -23,7 +23,9 @@ fi
 
 log="$dir/chunk-$(date +%s).log"
 start=$(date +%s)
-timeout $((minutes * 60 + 120)) uv run python train.py --config "$cfg" --run "$run" --resume --max-minutes "$minutes" > "$log" 2>&1
+# Call the venv interpreter directly so timeout's SIGTERM reaches train.py (graceful checkpoint).
+[ -x .venv/bin/python ] || uv sync --python 3.12 --frozen
+timeout $((minutes * 60 + 120)) .venv/bin/python train.py --config "$cfg" --run "$run" --resume --max-minutes "$minutes" > "$log" 2>&1
 code=$?
 end=$(date +%s)
 printf '{"start": %d, "end": %d, "minutes": %s, "exit": %d, "log": "%s"}\n' "$start" "$end" "$minutes" "$code" "$(basename "$log")" >> "$dir/chunks.jsonl"

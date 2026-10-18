@@ -170,7 +170,7 @@ sequences of `ŷ = y_full` against `s = s_tgt`.
 | Init | random (seed 1234), mask bias +3 | best phase-1 checkpoint by val SI-SDR | D18. |
 | Optimizer | AdamW, β (0.9, 0.999), weight decay 0.01 on matrices only | same, fresh moments | §6. |
 | LR | 1e−3 → 1e−5 cosine over phase-1 steps, 500-step linear warm-up | 3e−4 → 1e−5 cosine over phase-2 steps | §6; a lower restart for fine-tuning. |
-| Batch | 16 × 2 s | 16 × 2 s | §6. |
+| Batch | 16 × 2 s (2 ranks × 8, §9 B3-2) | 16 × 6 s rollouts (§9 B3-3) | §6. |
 | Gradient clip | global norm 5 | 5 | §6. |
 | BPTT | full 2 s sequence | GRU state detached every 100 frames (100 ms); no gradient through the acoustic feedback path (§9 D3) | §6 truncated BPTT; keeps cost bounded. |
 | Saturation stop | n/a (`id` pairs mute on trip) | guard trip → protection mute; trip rate logged | D18. |
@@ -179,14 +179,22 @@ sequences of `ŷ = y_full` against `s = s_tgt`.
 | Logging | `metrics.jsonl` every 50 steps + each validation | same | §7 B3. |
 | Validation | every 1 000 steps and at exit: 200 fixed held-out pairs (§6) → val loss, val SI-SDR | same set | Comparable across phases. |
 
-**Step counts.** Budget = 40 chunk-hours = 96 chunks of 25 min. Plan: 60
-chunks phase 1, 30 chunks phase 2, 6 spare for evals and restarts.
-`phase1_steps = 60 × N1`, `phase2_steps = 30 × N2`, where `N1`, `N2` are the
-steps per 25-minute chunk from B3's probe. B3 writes the measured numbers
-into the table below and into `configs/s.yaml`.
+**Step counts.** Budget = 40 chunk-hours = 96 chunks of 25 min. Measured by
+B3's probe (`train.py --probe`, 4 ranks × 1 thread, 1 data worker each, VM idle):
 
-| Probe (B3) | steps/s | steps per 25-min chunk | phase steps |
-|---|---|---|---|
+| Probe (B3) | steps/s | steps per 25-min chunk | phase steps | chunks |
+|---|---|---|---|---|
+| S phase 1 (16 × 2 s) | 0.655 | 923 | **40 000** | ≈ 43 |
+| S phase 2 (16 × 6 s rollouts) | 0.088 | 124 | **5 500** | ≈ 44 |
+
+(2 ranks gave 0.532 steps/s in phase 1; 1 process with 4 threads and 3 workers
+gave 0.143.) The split moved from the planned 60/30 chunks to ≈ 43/44 because a
+phase-2 step costs 7.4× a phase-1 step and phase 2 is the in-loop training that
+the ASG gate measures; ≈ 9 chunks remain spare for evals and restarts.
+Validation runs every 500 steps in phase 1 (≈ 13 min) and every 100 in phase 2
+(≈ 19 min), plus at every exit.
+
+---|---|---|---|
 | S phase 1 | _pending B3_ | _pending_ | _pending_ |
 | S phase 2 | _pending B3_ | _pending_ | _pending_ |
 
@@ -329,6 +337,24 @@ Builder deviations are appended below this line.
   cloud; `preview.py` prints trip status and level growth for each pair instead.
 * **B2-1 — parameter counts are exact.** `RinglessNet` counts equal §3 (S 192 561,
   M 661 553, tiny 5 681), so the ±10 % tolerance is not used.
+
+* **B3-1 — no weight decay on the filterbank.** AdamW decay applies to GRU and
+  Dense weight matrices only; decaying `A`/`S` would erode the DFT initialisation.
+* **B3-2 — two single-thread data-parallel ranks.** Measured on the VM for S,
+  batch 16 × 2 s: 2.75 s/step with 1 thread, 2.29 s/step with 4 threads (GRU
+  recursion is sequential), and 7.0 s/step with 4 threads plus 3 data workers
+  (oversubscription). `train.procs: 2` runs two ranks (gloo all-reduce, 8 items
+  each, 1 thread each, 2 data workers each) for the same global batch of 16;
+  `torch.set_num_threads(train.threads)` still applies when `procs` is 1.
+  Resume stays bit-exact for a fixed rank count.
+* **B3-3 — phase-2 rollouts are 6 s.** For the reason in B1-1, the model runs
+  in the loop for 6 s (`phase2.rollout_seconds`) and is trained on the whole
+  rollout with 100-frame truncated BPTT.
+* **B3-4 — tiny config.** 40 + 20 = 60 steps so the smoke test can stop at step
+  50 and resume at 51; one thread so it stays fast while other jobs run.
+* **B4-1 — eval details.** Eval scenes concatenate one held-out speaker's
+  utterances to 10 s (test-clean utterances are mostly shorter); eval runs
+  single-threaded by default (same oversubscription finding as B3-2).
 
 ---
 

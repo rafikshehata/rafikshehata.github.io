@@ -189,7 +189,8 @@ class PairDataset(torch.utils.data.Dataset):
         if self.phase == 1:
             mic, tgt, meta = self.gen.pair(seed)
             return torch.from_numpy(mic), torch.from_numpy(tgt), torch.tensor(float(meta["mode"] == "id"))
-        cp = self.gen.components(seed, phase=2)
+        T2 = int(round(self.gen.cfg["train"]["phase2"].get("rollout_seconds", self.gen.cfg["audio"]["seg_seconds"]) * FS)) // 96 * 96
+        cp = self.gen.components(seed, phase=2, T=T2)
         return {k: (torch.from_numpy(v) if isinstance(v, np.ndarray) else torch.tensor(v))
                 for k, v in cp.items() if k not in ("mode",)}
 

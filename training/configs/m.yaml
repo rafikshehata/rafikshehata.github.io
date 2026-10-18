@@ -21,7 +21,7 @@ model:
 
 data:
   source: real          # real | synthetic
-  workers: 2            # DataLoader workers per rank
+  workers: 1            # DataLoader workers per rank
   rir_train: 2000
   rir_heldout: 200
   noise_train_seconds: 240
@@ -55,7 +55,7 @@ loss:
 train:
   batch: 16
   threads: 4
-  procs: 2              # data-parallel single-thread ranks (DESIGN §9 B3-2)
+  procs: 4              # data-parallel single-thread ranks (DESIGN §9 B3-2)
   lr: 1.0e-3
   lr_min: 1.0e-5
   warmup: 500
@@ -70,6 +70,7 @@ train:
     g_rel_db: [-3, 3]
     p_above_msg: 0.5
     tbptt_frames: 100
+    rollout_seconds: 6.0   # in-loop rollout length (DESIGN §9 B3-3)
   ckpt_minutes: 5
   log_every: 50
   val_every: 1000
