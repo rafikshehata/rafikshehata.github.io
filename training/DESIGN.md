@@ -177,7 +177,7 @@ sequences of `ŷ = y_full` against `s = s_tgt`.
 | Threads | `torch.set_num_threads(4)` main process; workers single-threaded | same | §7 B3. |
 | Checkpoint | every 5 min and at exit; atomic; `latest.pt`, `prev.pt`, `best.pt` | same | §7 B3, §8. |
 | Logging | `metrics.jsonl` every 50 steps + each validation | same | §7 B3. |
-| Validation | every 1 000 steps and at exit: 200 fixed held-out pairs (§6) → val loss, val SI-SDR | same set | Comparable across phases. |
+| Validation | every 500 steps and at exit: 200 fixed held-out pairs (§6) → val loss, val SI-SDR | every 100 steps, same set | Comparable across phases. |
 
 **Step counts.** Budget = 40 chunk-hours = 96 chunks of 25 min. Measured by
 B3's probe (`train.py --probe`, 4 ranks × 1 thread, 1 data worker each, VM idle):
@@ -188,15 +188,12 @@ B3's probe (`train.py --probe`, 4 ranks × 1 thread, 1 data worker each, VM idle
 | S phase 2 (16 × 6 s rollouts) | 0.088 | 124 | **8 000** (was 5 500, §9 B5-2) | ≈ 65 |
 
 (2 ranks gave 0.532 steps/s in phase 1; 1 process with 4 threads and 3 workers
-gave 0.143.) The split moved from the planned 60/30 chunks to ≈ 43/44 because a
-phase-2 step costs 7.4× a phase-1 step and phase 2 is the in-loop training that
-the ASG gate measures; ≈ 9 chunks remain spare for evals and restarts.
+gave 0.143.) The split first moved from the planned 60/30 chunks to ≈ 43/44
+because a phase-2 step costs 7.4× a phase-1 step and phase 2 is the in-loop
+training the gate measures, then to ≈ 22/65 at step 10 101 (§9 B5-2); the
+rest of the 96 chunks is spare for evals and restarts.
 Validation runs every 500 steps in phase 1 (≈ 13 min) and every 100 in phase 2
 (≈ 19 min), plus at every exit.
-
----|---|---|---|
-| S phase 1 | _pending B3_ | _pending_ | _pending_ |
-| S phase 2 | _pending B3_ | _pending_ | _pending_ |
 
 ---
 
