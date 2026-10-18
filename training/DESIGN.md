@@ -395,6 +395,15 @@ Builder deviations are appended below this line.
   stop and write the FAIL report with the diagnosis and DESIGN v2 proposals.
   The validation loss scale changes with the weight; best-checkpoint selection
   does not use it.
+* **B5-6 — outcome: G2c FAIL, run stopped at step 19 823 (15.85 / 40
+  chunk-hours).** The B5-5 trial evals gave SI-SDRi +2.45 / +2.41 dB (needed
+  ≥ +2.58), so training stopped as planned. Best eval: step 17 856 (ASG median
+  +5.94, p10 +4.19 dB, SI-SDRi +2.48 dB, ΔSTOI +0.010), kept as `best_gate.pt`
+  and exported on `ckpt/s-v1`. Diagnosis: open loop the model reaches the
+  late-reverb ceiling (15.5 dB SI-SDR); in the loop at −3 dB it loses 2.8 dB to
+  coherent feedback that a real magnitude mask cannot subtract. DESIGN v2
+  proposals are in `runs/s-v1/REPORT.md` on `ckpt/s-v1` (phase-aware output,
+  reference input, data realism, capacity).
 
 ---
 
