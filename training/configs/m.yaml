@@ -1,0 +1,83 @@
+# Ringless neural stage — model M (m-v1, local M1 Pro run). Values per training/DESIGN.md.
+name: m
+run: m-v1
+seed: 1234
+
+audio:
+  fs: 48000
+  window: 96            # 2 ms   (DESIGN §2)
+  hop: 48               # 1 ms   -> latency W+H = 3 ms
+  seg_seconds: 2.0
+
+model:
+  n_bins: 49
+  hidden: [256, 256]
+  learn_filterbank: true
+  mask_bias_init: 3.0
+  feat_eps: 1.0e-10
+  feat_offset: 5.0
+  feat_scale: 0.5
+  expected_params: 661553
+
+data:
+  source: real          # real | synthetic
+  workers: 3
+  rir_train: 2000
+  rir_heldout: 200
+  noise_train_seconds: 240
+
+sim:
+  partition: 96
+  pa_delay_ms: [2, 30]
+  g_rel_db: [-12, 3]
+  p_above_msg: 0.35
+  headroom_db: [18, 30]
+  input_level_dbfs: [-55, -15]
+  snr_db: [5, 30]
+  early_ms: 50
+  p_id: 0.3
+  id_g_rel_db: [-2, 3]
+  guard_clipped: 100
+  guard_window: 480
+
+loss:
+  mrstft: [[256, 64], [512, 128], [1024, 256]]
+  w_mrstft: 1.0
+  w_sisdr: 0.05
+  w_howl: 1.0
+  howl_nfft: 2048
+  howl_hop: 512
+  howl_peak_db: 6.0
+  howl_nbhd: 31
+
+train:
+  batch: 16
+  threads: 4
+  lr: 1.0e-3
+  lr_min: 1.0e-5
+  warmup: 500
+  weight_decay: 0.01
+  grad_clip: 5.0
+  phase1_steps: 120000   # placeholder until the B3 probe (60 chunks x N1)
+  phase2_steps: 15000    # placeholder until the B3 probe (30 chunks x N2)
+  phase2:
+    batch: 16
+    lr: 3.0e-4
+    lr_min: 1.0e-5
+    g_rel_db: [-3, 3]
+    p_above_msg: 0.5
+    tbptt_frames: 100
+  ckpt_minutes: 5
+  log_every: 50
+  val_every: 1000
+  val_pairs: 200
+
+eval:
+  scenes: 24
+  seconds: 10.0
+  input_level_dbfs: -35
+  snr_db: 20
+  headroom_db: 24
+  search_db: [-12, 24]
+  search_iters: 9
+  fsr_max_db: 10.0

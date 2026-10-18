@@ -1,0 +1,84 @@
+# Ringless neural stage — tiny smoke-test config (~5k trainable params, 50 steps).
+# Uses the synthetic source so it runs on a fresh clone without datasets.
+name: tiny
+run: tiny
+seed: 1234
+
+audio:
+  fs: 48000
+  window: 96
+  hop: 48
+  seg_seconds: 0.5
+
+model:
+  n_bins: 49
+  hidden: [16, 16]
+  learn_filterbank: false
+  mask_bias_init: 3.0
+  feat_eps: 1.0e-10
+  feat_offset: 5.0
+  feat_scale: 0.5
+  expected_params: 5681
+
+data:
+  source: synthetic
+  workers: 0
+  rir_train: 16
+  rir_heldout: 4
+  noise_train_seconds: 240
+
+sim:
+  partition: 96
+  pa_delay_ms: [2, 30]
+  g_rel_db: [-12, 3]
+  p_above_msg: 0.35
+  headroom_db: [18, 30]
+  input_level_dbfs: [-55, -15]
+  snr_db: [5, 30]
+  early_ms: 50
+  p_id: 0.3
+  id_g_rel_db: [-2, 3]
+  guard_clipped: 100
+  guard_window: 480
+
+loss:
+  mrstft: [[256, 64], [512, 128], [1024, 256]]
+  w_mrstft: 1.0
+  w_sisdr: 0.05
+  w_howl: 1.0
+  howl_nfft: 2048
+  howl_hop: 512
+  howl_peak_db: 6.0
+  howl_nbhd: 31
+
+train:
+  batch: 4
+  threads: 4
+  lr: 1.0e-3
+  lr_min: 1.0e-5
+  warmup: 10
+  weight_decay: 0.01
+  grad_clip: 5.0
+  phase1_steps: 40
+  phase2_steps: 10
+  phase2:
+    batch: 2
+    lr: 3.0e-4
+    lr_min: 1.0e-5
+    g_rel_db: [-3, 3]
+    p_above_msg: 0.5
+    tbptt_frames: 100
+  ckpt_minutes: 5
+  log_every: 10
+  val_every: 25
+  val_pairs: 8
+
+eval:
+  scenes: 4
+  seconds: 2.0
+  input_level_dbfs: -35
+  snr_db: 20
+  headroom_db: 24
+  search_db: [-12, 24]
+  search_iters: 6
+  fsr_max_db: 10.0
