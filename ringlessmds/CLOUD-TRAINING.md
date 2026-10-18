@@ -480,8 +480,8 @@ loss, schedule — in that order of suspicion).
 - mode: single cloud session plays all roles on `rafikshehata/rafikshehata.github.io`, branch `claude/wizardly-hawking-ctkdaw` (= "main" here); checkpoints on `ckpt/<run>` (DESIGN §9 D0)
 - design: locked ec6977b
 - build: B0 ☑ (ckpt round-trip verified on a local bare remote only; GitHub push 403) · B1 ☑ · B2 ☑ · B3 ☑ · B4 ☑ · B5 ☐
-- run s-v1: chunks 2 · step 1330 (phase 1) · val SI-SDR 8.62 dB · best 8.62 dB @ 1330 · chunk-hours 0.64 · last ASG (if evaluated): median A dB, p10 A10 dB — gate G2c: PASS|FAIL|not run
+- run s-v1: chunks 2 · step 1330 (phase 1) · val SI-SDR 8.62 dB · best 8.62 dB @ 1330 · chunk-hours 0.64 · last ASG —
 - budget_hours: 40
 - gate G2c: pending
 - blocked: GitHub push refused (Claude GitHub App lacks write access to the repo) — commits are local until the owner fixes access
-- last update: 2026-10-18 — chunk 2 done
+- last update: 2026-10-18 — chunk 2 done (chunk 1 crashed at its first validation; fixed)

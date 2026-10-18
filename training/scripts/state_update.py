@@ -24,7 +24,8 @@ st = json.loads((d / "state.json").read_text())
 chunks = [json.loads(l) for l in open(d / "chunks.jsonl")] if (d / "chunks.jsonl").exists() else []
 hours = sum(c["end"] - c["start"] for c in chunks) / 3600
 lv = (st.get("last_val") or {}).get("val_sisdr")
-text = DOC.read_text()
+full = DOC.read_text()
+head, sep, text = full.partition("## STATE")          # edit only the STATE block
 old_asg = re.search(r"last ASG ([^\n]*)", text)
 asg = a.asg or (old_asg.group(1) if old_asg else "—")
 line = (f"- run {a.run}: chunks {len(chunks)} · step {st['step']} (phase {st['phase']}) · "
@@ -38,5 +39,5 @@ if a.blocked is not None:
     text = re.sub(r"- blocked: [^\n]*\n", f"- blocked: {a.blocked}\n", text, count=1)
 note = a.note or f"chunk {len(chunks)} done"
 text = re.sub(r"- last update: [^\n]*\n", f"- last update: {dt.date.today().isoformat()} — {note}\n", text, count=1)
-DOC.write_text(text)
+DOC.write_text(head + sep + text)
 print(line)
