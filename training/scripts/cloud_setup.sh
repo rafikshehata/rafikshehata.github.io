@@ -12,5 +12,6 @@ if [ -f uv.lock ]; then uv sync --python 3.12 --frozen; else uv sync --python 3.
 # Data steps exist from B1 on; skip quietly before that.
 if [ -f data/fetch.py ]; then uv run python -m training.data.fetch --all; fi
 if [ -f data/rir.py ]; then uv run python -m training.data.rir --build; fi
+if [ -f data/idcache.py ]; then uv run python -m training.data.idcache --build --config configs/s.yaml; fi
 
 echo "cloud_setup: done in $(( $(date +%s) - t0 )) s; data in $RL_DATA_DIR ($(du -sh "$RL_DATA_DIR" | cut -f1))"

@@ -21,10 +21,11 @@ model:
 
 data:
   source: real          # real | synthetic
-  workers: 3
+  workers: 2            # DataLoader workers per rank
   rir_train: 2000
   rir_heldout: 200
   noise_train_seconds: 240
+  id_cache: 4000        # precomputed identity-loop pairs (B1 throughput remedy)
 
 sim:
   partition: 96
@@ -37,6 +38,7 @@ sim:
   early_ms: 50
   p_id: 0.3
   id_g_rel_db: [-2, 3]
+  id_sim_seconds: 6.0
   guard_clipped: 100
   guard_window: 480
 
@@ -53,6 +55,7 @@ loss:
 train:
   batch: 16
   threads: 4
+  procs: 2              # data-parallel single-thread ranks (DESIGN §9 B3-2)
   lr: 1.0e-3
   lr_min: 1.0e-5
   warmup: 500

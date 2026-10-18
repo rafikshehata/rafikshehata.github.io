@@ -312,6 +312,24 @@ Open questions for the owner:
 
 Builder deviations are appended below this line.
 
+* **B1-1 — identity pairs are simulated for 6 s.** Measured on 24 held-out rooms
+  (identity loop, headroom 24 dB): guard trip rate within 2 s was 0.04 / 0.12 /
+  0.33 at `g_rel` = +1 / +2 / +3 dB, but 0.21 / 0.71 / 0.92 within 6 s (median
+  trip at 4.3 / 3.4 / 2.0 s). Two-second cold starts therefore rarely howl. Each
+  `id` pair now runs 6 s (`sim.id_sim_seconds`) and keeps the 2 s window ending
+  100 ms after the trip (the last 2 s if it never trips). `g_rel` stays in §6 bounds.
+* **B1-2 — identity-pair cache.** With B1-1 the on-the-fly throughput fell to
+  11.8 pairs/s with 3 workers (< 20). As §7 B1 prescribes, 4 000 `id` pairs are
+  precomputed once into `$RL_DATA_DIR/idcache/` (float16 with per-pair peak
+  scaling, 1.5 GB) and drawn by seed with a random ±6 dB gain and polarity;
+  teacher-forced pairs and all validation pairs stay on the fly.
+* **B1-3 — teacher-forced pairs skip the guard.** They are open loop (the PA
+  plays the clean target), so there is no runaway to stop; clipping still applies.
+* **B1-4 — preview listening.** "Audibly ring" cannot be judged by ear in the
+  cloud; `preview.py` prints trip status and level growth for each pair instead.
+* **B2-1 — parameter counts are exact.** `RinglessNet` counts equal §3 (S 192 561,
+  M 661 553, tiny 5 681), so the ±10 % tolerance is not used.
+
 ---
 
 ## 10. Acceptance tests (checklist)
