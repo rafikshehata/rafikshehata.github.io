@@ -212,18 +212,9 @@ class Trainer:
         n, T = self.t["val_pairs"], int(self.cfg["audio"]["seg_seconds"] * 48000)
         cache = ROOT / "data_cache" / f"val_{self.cfg['name']}_{self.cfg['data']['source']}_{n}_{T}.pt"
         if self.is0 and not cache.exists():
-            gen = D.PairGenerator(self.cfg, "heldout")
-
-            class _V(torch.utils.data.Dataset):
-                def __len__(self):
-                    return n
-
-                def __getitem__(self, i):
-                    mic, tgt, meta = gen.pair(D.VAL_SEED_BASE + i)
-                    return torch.from_numpy(mic), torch.from_numpy(tgt), torch.tensor(float(meta["mode"] == "id"))
-
-            w = max(1, self.cfg["data"]["workers"]) if self.cfg["data"]["workers"] else 0
-            parts = list(torch.utils.data.DataLoader(_V(), batch_size=10, num_workers=w, worker_init_fn=D.worker_init))
+            w = self.cfg["data"]["workers"]
+            parts = list(torch.utils.data.DataLoader(D.ValDataset(self.cfg, n), batch_size=10, num_workers=w,
+                                                     worker_init_fn=D.worker_init))
             data = tuple(torch.cat([p[k] for p in parts]) for k in range(3))
             cache.parent.mkdir(exist_ok=True)
             save_atomic(data, cache)

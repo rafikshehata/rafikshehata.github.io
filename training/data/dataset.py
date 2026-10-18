@@ -198,6 +198,20 @@ class PairDataset(torch.utils.data.Dataset):
                 for k, v in cp.items() if k not in ("mode",)}
 
 
+class ValDataset(torch.utils.data.Dataset):
+    """The fixed held-out validation pairs (module level so spawned DataLoader workers can pickle it)."""
+
+    def __init__(self, cfg: dict, n: int):
+        self.gen, self.n = PairGenerator(cfg, "heldout"), n
+
+    def __len__(self):
+        return self.n
+
+    def __getitem__(self, i):
+        mic, tgt, meta = self.gen.pair(VAL_SEED_BASE + int(i))
+        return torch.from_numpy(mic), torch.from_numpy(tgt), torch.tensor(float(meta["mode"] == "id"))
+
+
 def collate_phase2(items):
     """Pad RIRs to a common length; stack everything else."""
     L = max(len(it["h_pa"]) for it in items)

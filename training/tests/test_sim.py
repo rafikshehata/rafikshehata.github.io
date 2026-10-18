@@ -133,3 +133,11 @@ def test_targets_are_not_silent(cfg):
         assert loop_sim.energy_db(tgt) > loop_sim.energy_db(mic) - 50, meta
     cp = g.components(400, phase=2, T=4 * 48000)
     assert loop_sim.energy_db(cp["target"][-48000:]) > loop_sim.energy_db(cp["src"][-48000:]) - 30
+
+
+def test_val_dataset_picklable_for_spawn_workers(cfg):
+    import pickle
+    from training.data.dataset import ValDataset
+    ds = pickle.loads(pickle.dumps(ValDataset(cfg, 2)))
+    mic, tgt, is_id = ds[0]
+    assert mic.shape == tgt.shape
